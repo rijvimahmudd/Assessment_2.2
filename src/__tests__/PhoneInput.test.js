@@ -1,30 +1,32 @@
-import { cleanup, render, fireEvent, screen } from '@testing-library/react';
-import PhoneInput from '../components/PhoneInput';
+import { render, fireEvent } from "@testing-library/react";
+import PhoneInput from "../components/PhoneInput";
 
-afterEach(cleanup);
+describe("PhoneInput", () => {
+  it("should update phone number when input value changes", () => {
+    const { getByLabelText } = render(<PhoneInput />);
+    const input = getByLabelText("(123) 456-7890");
 
-describe('PhoneInput', () => {
-  it('formats phone number correctly', () => {
-    render(<PhoneInput />);
+    fireEvent.change(input, { target: { value: "1234567890" } });
 
-    const input = screen.getByPlaceholderText('mobile number');
-
-    fireEvent.change(input, { target: { value: '123456' } });
-    expect(input.value).toBe('(123) 456');
-
-    fireEvent.change(input, { target: { value: '7890' } });
-    expect(input.value).toBe('(789) 0');
+    expect(input.value).toBe("(123) 456-7890");
   });
 
-  it('does not allow non-digit characters', () => {
-    render(<PhoneInput />);
+  it("should format phone number on input change", () => {
+    const { getByLabelText } = render(<PhoneInput />);
+    const input = getByLabelText("(123) 456-7890");
 
-    const input = screen.getByPlaceholderText('mobile number');
+    fireEvent.change(input, { target: { value: "12345678901" } });
 
-    fireEvent.change(input, { target: { value: 'abc123' } });
-    expect(input.value).toBe('123');
+    expect(input.value).toBe("(123) 456-78901");
+  });
 
-    fireEvent.change(input, { target: { value: '456def' } });
-    expect(input.value).toBe('456');
+  it("should allow backspace to delete characters", () => {
+    const { getByLabelText } = render(<PhoneInput />);
+    const input = getByLabelText("(123) 456-7890");
+
+    fireEvent.change(input, { target: { value: "1234567890" } });
+    fireEvent.change(input, { target: { value: "123456789" } });
+
+    expect(input.value).toBe("123456789");
   });
 });

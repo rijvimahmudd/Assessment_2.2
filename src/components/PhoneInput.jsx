@@ -1,15 +1,22 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import formatPhoneNumber from "../utils/formatPhNum";
 
 
 // Component for the phone input field
 const PhoneInput = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const inputRef = useRef(null);
 
   // Event handler for input changes
   function handleInputChange(event) {
-    const formatted = formatPhoneNumber(event.target.value);
-    setPhoneNumber(formatted);
+    const inputValue = event.target.value;
+    // Handle backspace separately
+    if (inputValue.length < phoneNumber.length) {
+      setPhoneNumber(inputValue);
+    } else {
+      const formatted = formatPhoneNumber(inputValue);
+      setPhoneNumber(formatted);
+    }
   }
 
   return (
@@ -22,6 +29,7 @@ const PhoneInput = () => {
         autoComplete="off"
         value={phoneNumber}
         onChange={handleInputChange}
+        ref={inputRef}
       />
       <div>
         <label htmlFor="phone">(123) 456-7890</label>
